@@ -29,7 +29,7 @@ public class BinaryFile {
 	String path;
 	long records;
 	long rowCounts;
-	// name, type
+	// name, type. these column types has Java Simple Types, either Number or String
 	Map<String, String> columns;
 	
 	private BinaryFile( String path ) {

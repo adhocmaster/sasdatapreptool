@@ -42,12 +42,15 @@ public class ReportEngine implements ReportInterface {
 	public void start() throws IOException {
 
 		logger.info( "Starting up reporting engine");
-		logger.info( "Generating primary stats");
+
+		logger.info( "Processing metadata file" );
 		
+		metadataFile =  new MetadataFile( metaDataFilePath, sasFolderPath );
+
+		logger.info( "Generating primary stats for binary files...");
 		stats = new Stats();
 		stats.generate( sasFolderPath );
 		
-		metadataFile =  new MetadataFile( metaDataFilePath );
 		
 		//#1
 		printBinaryFilePaths();

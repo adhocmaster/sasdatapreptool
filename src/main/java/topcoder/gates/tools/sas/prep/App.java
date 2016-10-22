@@ -11,6 +11,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.file.Files;
+import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -58,56 +59,74 @@ public class App
     	
     	if( null == args || args.length < 2 ) {
     		
+    		logger.error( "--config filename missing. Try with config or properties file path again." );
     		throw new IllegalArgumentException( "--config filename missing" );
     	}
     	
-    	App app = new App();
-    	
-    	app.loadPropertiesFile( args[1] );
-    	
-    	while ( true ) {
+    	try {
+
+    		logger.info("#####################################################################");
+    		logger.info("#####################################################################");
     		
+    		Date date = new Date();
+    			
+    		logger.info("New session started at " + date.toString() );
+    		
+	    	App app = new App();
+	    	
+	    	app.loadPropertiesFile( args[1] );
+
     		Menu menu = new Menu();
     		
-    		menu.showMenu();
+	    	while ( true ) {
+	    		
+	    		menu.showMenu();
+	    		
+	    		Scanner scanner = new Scanner( System.in );
+	    		
+	    		int operationIndex = scanner.nextInt();
+	    		
+	    		if ( 0 == operationIndex )  {
+	
+	    			logger.info( "Thank you for using it. Good bye!" );
+	    			break;
+	    			
+	    		}
+	    		
+	    		
+	    		switch( operationIndex ) {
+	    		
+	    		case 1:
+	
+	    			logger.info( "You chose operation 1. Starting..." );
+	    			
+	    			new ShellFileCreator().createCodeShellFile( app.metaDataFilePath, app.sasFolderPath, app.shellSuffix );
+	    			
+	    			logger.info( "Operation 1 ended successfully..." );
+	    			break;
+	    			
+	    		case 2:
+	    			
+	    			logger.info( "You chose operation 2. Starting..." );
+	    			
+	    			new ReportEngine( app.sasFolderPath, app.metaDataFilePath, app.shellSuffix ).start();
+	    			
+	    			logger.info( "Operation 2 ended successfully..." );
+	    			break;
+	    			
+	    		default:
+	
+	    			logger.info( " You chose operation something which is not implemented yet." );
+	    		
+	    		}
+	    		
+	    	}
+	    	
+    	} catch ( Exception e ) {
     		
-    		Scanner scanner = new Scanner( System.in );
+    		logger.error( e.getMessage(), e );
     		
-    		int operationIndex = scanner.nextInt();
-    		
-    		if ( 0 == operationIndex )  {
-
-    			logger.info( "Thank you for using it. Good bye!" );
-    			break;
-    			
-    		}
-    		
-    		
-    		switch( operationIndex ) {
-    		
-    		case 1:
-
-    			logger.info( "You chose operation 1. Starting..." );
-    			
-    			new ShellFileCreator().createCodeShellFile( app.metaDataFilePath, app.sasFolderPath, app.shellSuffix );
-    			
-    			logger.info( "Operation 1 ends..." );
-    			break;
-    			
-    		case 2:
-    			
-    			logger.info( "You chose operation 2. Starting..." );
-    			
-    			new ReportEngine( app.metaDataFilePath, app.sasFolderPath, app.shellSuffix ).start();
-    			
-    			logger.info( "Operation 2 ends..." );
-    			break;
-    			
-    		default:
-
-    			logger.info( " You chose operation something which is not implemented yet." );
-    		
-    		}
+    		throw e;
     		
     	}
     }
