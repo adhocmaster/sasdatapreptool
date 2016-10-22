@@ -16,11 +16,13 @@ public class ShellFileCreatorTest {
 	@Test
 	public void testCreateCodeShellFile() {
 		
-		String DDFFilePath = "E:/projects/R/gates/Example 01 Shell and Validation/ex01_DDF_with_code_flags.csv";
+		String DDFFilePath = "D:/eclipseProjects/sasdatapreptool/assets/Example 01 Shell and Validation/ex01_DDF_with_code_flags_custom.csv";
+		String outDir = "D:/eclipseProjects/sasdatapreptool/assets/output";
+		String suffix = "_CodeShellFile";
 		
 		try {
 			
-			new ShellFileCreator().createCodeShellFile( DDFFilePath );
+			new ShellFileCreator().createCodeShellFile( DDFFilePath, outDir, suffix );
 			
 		} catch ( Exception e ) {
 			

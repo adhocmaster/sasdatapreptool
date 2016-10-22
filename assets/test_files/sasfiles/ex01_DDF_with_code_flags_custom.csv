@@ -1,0 +1,73 @@
+ORIGINAL_DATANAME,ORIGINAL_VARNAME,ORIGINAL_VARTYPE,ORIGINAL_VARLABEL,ORIGINAL_KEY,TARGET_DATANAME,TARGET_VARNAME,TARGET_VARTYPE,TARGET_SASFMT,IS_TARGET_FIELD_CODE_NAME,IS_TARGET_FIELD_CODE_VALUE,TARGET_VARLABEL,MAPPING_FILE,CODE_SNIPPET
+EX01_SUBJ,INVID,num,Investigator ID,,SUBJ,SITEID,num,,,,Site Identifier,,
+EX01_SUBJ,SUBJECT,num,Subject ID,1,SUBJ,SUBJID,num,z8.,,,Subject Identifier,,10*SUBJECT + 5
+EX01_SUBJ,WEIGHT_BIRTH,num,Birth Weight,,SUBJ,BIRTHWT,num,,,,,,
+EX01_SUBJ,LENGTH_BIRTH,num,Birth Length,,SUBJ,BIRTHLEN,num,,,,,,
+EX01_SUBJ,APGAR_1,num,APGAR Score - 1min,,SUBJ,APGAR1,num,,,,,,
+EX01_SUBJ,APGAR_5,num,APGAR Score - 5min,,SUBJ,APGAR5,num,,,,,,
+EX01_SUBJ,DUR_BRST,num,Duration of BF (days),,SUBJ,DURBRST,num,,,,,,
+,,,,,SUBJ,STUDYID,char,,,,,,"""Example 01"""
+EX01_SUBJ,AGEMOM,num,Age of mother,,PARENTS,MAGE,num,,,,,,
+EX01_SUBJ,HEIGHT_MOM,num,Height of mother,,PARENTS,MHTCM,num,,,,,,
+EX01_SUBJ,EDUC_MOM,num,Mother education level,,PARENTS,MEDUCYRS,num,,,,,,
+EX01_SUBJ,AGE_DAD,num,Age of father,,PARENTS,FAGE,num,,,,,,
+EX01_SUBJ,HEIGHT_DAD,num,Height of father,,PARENTS,FHTCM,num,,,,,,
+,,,,,PARENTS,STUDYID,char,,,,,,"""Example 01"""
+EX01_SUBJ,INCOME,num,Family income,,SS,SSSTRESN,num,,,Y,Numeric result in standard units,,
+EX01_SUBJ,GENDER,char,Gender,,SUBJ,SEXN,char,,,,,ex01_subj-gender.csv,
+EX01_SUBJ,DELIVERY_MODE,char,Mode of delivery,,SUBJ,DELIVERYN,char,,,,,ex01_subj-delivery_mode.csv,
+EX01_SUBJ,SMOKE_STAT,char,Smoking status,,SUBJ,SMOKSTAT,char,,,,,ex01_subj-smoking_stat.csv,
+,,,,,SUBJ,STUDYID,char,,,,,,
+EX01_SUBJ,FLOOR_TYPE,char,Floor type,,SS,SSSTRESC,char,,,Y,Character result in standard units,,
+,,,,,SS,SSTESTCD,char,,Y,,,,
+,,,,,SS,SSCAT,char,,Y,,,,
+,,,,,SS,STUDYID,char,,,,,,"""Example 01"""
+EX01_VISIT,SUBJECT,num,Subject ID,1,ANTHRO,SUBJID,num,z8.,,Y,Subject Identifier,,10*SUBJECT + 5
+EX01_VISIT,AGE,num,Age in days,1,ANTHRO,AGEDAYS,num,,,Y,,,
+EX01_VISIT,WEIGHT,num,Weight (kg),,ANTHRO,WTKG,num,,,Y,,,
+EX01_VISIT,HEIGHT,num,Height (cm),,ANTHRO,HTCM,num,,,,,,
+EX01_VISIT,BODYMASS,num,BMI (kg/m**2),,ANTHRO,BMI,num,,,,,,
+EX01_VISIT,HEADCIR,num,Head circumference (cm),,ANTHRO,HCIRCM,num,,,,,,
+EX01_VISIT,WAZ,num,,,ANTHRO,WAZ,num,,Y,,Weight for Age Z-score,,
+EX01_VISIT,HAZ,num,,,ANTHRO,HAZ,num,,Y,,Height for Age Z-score,,
+EX01_VISIT,WHZ,num,,,ANTHRO,WHZ,num,,,,Weight for Height Z-score,,
+EX01_VISIT,BAZ,num,,,ANTHRO,BAZ,num,,,,,,
+EX01_VISIT,HCAZ,num,,,ANTHRO,HCAZ,num,,,,,,
+,,,,,ANTHRO,STUDYID,char,,,,,,"""Example 01"""
+,,,,,,,,,,,,,
+EX01_SUBJ,INVID,num,Investigator ID,,SUBJ,SITEID,num,,,,Site Identifier,,
+EX01_SUBJ,SUBJECT,num,Subject ID,1,SUBJ,SUBJID,num,z8.,,,Subject Identifier,,10*SUBJECT + 5
+EX01_SUBJ,WEIGHT_BIRTH,num,Birth Weight,,SUBJ,BIRTHWT,num,,,,,,
+EX01_SUBJ,LENGTH_BIRTH,num,Birth Length,,SUBJ,BIRTHLEN,num,,,,,,
+EX01_SUBJ,APGAR_1,num,APGAR Score - 1min,,SUBJ,APGAR1,num,,,,,,
+EX01_SUBJ,APGAR_5,num,APGAR Score - 5min,,SUBJ,APGAR5,num,,,,,,
+EX01_SUBJ,DUR_BRST,num,Duration of BF (days),,SUBJ,DURBRST,num,,,,,,
+,,,,,SUBJ,STUDYID,char,,,,,,"""Example 01"""
+EX01_SUBJ,AGEMOM,num,Age of mother,,PARENTS,MAGE,num,,,,,,
+EX01_SUBJ,HEIGHT_MOM,num,Height of mother,,PARENTS,MHTCM,num,,,,,,
+EX01_SUBJ,EDUC_MOM,num,Mother education level,,PARENTS,MEDUCYRS,num,,,,,,
+EX01_SUBJ,AGE_DAD,num,Age of father,,PARENTS,FAGE,num,,,,,,
+EX01_SUBJ,HEIGHT_DAD,num,Height of father,,PARENTS,FHTCM,num,,,,,,
+,,,,,PARENTS,STUDYID,char,,,,,,"""Example 01"""
+EX01_SUBJ,INCOME,num,Family income XX,,XX,SSSTRESN,num,,,Y,Numeric result in standard units,,
+EX01_SUBJ,GENDER,char,Gender,,SUBJ,SEXN,char,,,,,ex01_subj-gender.csv,
+EX01_SUBJ,DELIVERY_MODE,char,Mode of delivery,,SUBJ,DELIVERYN,char,,,,,ex01_subj-delivery_mode.csv,
+EX01_SUBJ,SMOKE_STAT,char,Smoking status,,SUBJ,SMOKSTAT,char,,,,,ex01_subj-smoking_stat.csv,
+,,,,,SUBJ,STUDYID,char,,,,,,
+EX01_SUBJ,FLOOR_TYPE,char,Floor type XX,,XX,XXSTRESC,char,,,Y,Character result in standard units,,
+,,,,,XX,XXTESTCD,char,,Y,,,,
+,,,,,XX,XXCAT,char,,Y,,,,
+,,,,,XX,STUDYID,char,,,,,,"""Example 01"""
+EX01_VISIT,SUBJECT,num,Subject ID,1,ANTHRO,SUBJID,num,z8.,,,Subject Identifier,,10*SUBJECT + 5
+EX01_VISIT,AGE,num,Age in days,1,ANTHRO,AGEDAYS,num,,,,,,
+EX01_VISIT,WEIGHT,num,Weight (kg),,ANTHRO,WTKG,num,,,,,,
+EX01_VISIT,HEIGHT,num,Height (cm),,ANTHRO,HTCM,num,,,,,,
+EX01_VISIT,BODYMASS,num,BMI (kg/m**2),,ANTHRO,BMI,num,,,,,,
+EX01_VISIT,HEADCIR,num,Head circumference (cm),,ANTHRO,HCIRCM,num,,,,,,
+EX01_VISIT,WAZ,num,,,ANTHRO,WAZ,num,,,,Weight for Age Z-score,,
+EX01_VISIT,HAZ,num,,,ANTHRO,HAZ,num,,,,Height for Age Z-score,,
+EX01_VISIT,WHZ,num,,,ANTHRO,WHZ,num,,,,Weight for Height Z-score,,
+EX01_VISIT,BAZ,num,,,ANTHRO,BAZ,num,,,,,,
+EX01_VISIT,HCAZ,char,,,ANTHRO,HCAZ,num,,,,,,
+,,,,,ANTHRO,STUDYID,char,,,,,,"""Example 01"""
+,MAL,num,,,,,,,,,,,

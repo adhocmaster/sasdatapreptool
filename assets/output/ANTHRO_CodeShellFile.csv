@@ -1,0 +1,4 @@
+"ORIGINAL_DATANAME","ORIGINAL_VARNAME","ORIGINAL_VARTYPE","ORIGINAL_VARLABEL","ORIGINAL_KEY","CODE_WAZ","CODE_HAZ"
+"EX01_VISIT","SUBJECT","num","Subject ID","1"," "," "
+"EX01_VISIT","AGE","num","Age in days","1"," "," "
+"EX01_VISIT","WEIGHT","num","Weight (kg)",""," "," "
