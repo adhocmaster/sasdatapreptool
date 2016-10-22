@@ -76,6 +76,9 @@ public class ReportEngine implements ReportInterface {
 		
 		//#8
 		printInvalidMappingFiles();
+		
+		//#8
+		printInvalidCodeSnippets();
 	}
 
 	/**
@@ -317,14 +320,32 @@ public class ReportEngine implements ReportInterface {
 	 * #9 Please ensure that there are no open quotes in the in the Code Snippet column. For example, “Example 1 rather than “Example 1”.
 	 * @return
 	 */
-	public List<String> getInvalidCodeSnippets() {
-		// TODO Auto-generated method stub
-		return null;
+	public void printInvalidCodeSnippets() {
+
+		logger.info( "---------------------------------------------------------------------------------------------" );
+		logger.info( "#9 Open quotes validation in the Code Snippet column: " );
+		
+		if ( metadataFile.isCodeSnippetValid() ) {
+			
+			logger.info( "Code snippets have no open quotes");
+			
+		} else {
+			
+			logger.error( "INVALID: open quotes at line #" + metadataFile.getCondeSnippetInvalidRow() );
+			
+		}
+		
 	}
 
-	public List<String> validateShellAgainstMetaData() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * #10 The validation process should look for the shell files described in Section 1 above. If there are ‘Y’ values in the IS_TARGET_FIELD_CODE_NAME column 
+	 * of the DDF file there should a corresponding shell file for the target file which contains the appropriate code values.
+	 * @return
+	 */
+	public void validateShellAgainstMetaData() {
+		
+		logger.info( "---------------------------------------------------------------------------------------------" );
+		logger.info( "#10 Validate Shell file agains DDF: " );
 	}
 
 	public List<String> validateShellCodeNames() {

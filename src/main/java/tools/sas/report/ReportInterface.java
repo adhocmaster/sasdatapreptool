@@ -60,14 +60,14 @@ public interface ReportInterface {
 	 * #9 Please ensure that there are no open quotes in the in the Code Snippet column. For example, “Example 1 rather than “Example 1”.
 	 * @return
 	 */
-	public List<String> getInvalidCodeSnippets();
+	public void printInvalidCodeSnippets();
 	
 	/**
 	 * #10 The validation process should look for the shell files described in Section 1 above. If there are ‘Y’ values in the IS_TARGET_FIELD_CODE_NAME column 
 	 * of the DDF file there should a corresponding shell file for the target file which contains the appropriate code values.
 	 * @return
 	 */
-	public List<String> validateShellAgainstMetaData();
+	public void validateShellAgainstMetaData();
 	
 	/**
 	 * #11 The validation solution should also verify that the names of code fields in shell files match up with the target field names in the metadata document. 

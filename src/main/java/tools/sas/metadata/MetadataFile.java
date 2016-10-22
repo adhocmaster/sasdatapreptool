@@ -27,6 +27,8 @@ public class MetadataFile {
 	
 
 	boolean isCodeSnippetValid = true;
+	long condeSnippetInvalidRow = 0;
+	long rows; // rows including header
 	
 	String filename;
 	String sasFolderPath;
@@ -65,6 +67,18 @@ public class MetadataFile {
 		return isCodeSnippetValid;
 	}
 
+	public Logger getLogger() {
+		return logger;
+	}
+
+	public long getCondeSnippetInvalidRow() {
+		return condeSnippetInvalidRow;
+	}
+
+	public long getRows() {
+		return rows;
+	}
+
 	public String getSasFolderPath() {
 		return sasFolderPath;
 	}
@@ -84,6 +98,13 @@ public class MetadataFile {
 
 
 
+	@Override
+	public String toString() {
+		return "MetadataFile [isCodeSnippetValid=" + isCodeSnippetValid + ", condeSnippetInvalidRow="
+				+ condeSnippetInvalidRow + ", rows=" + rows + ", filename=" + filename + ", sasFolderPath="
+				+ sasFolderPath + ", path=" + path + ", columns=" + columns + ", mappingFiles=" + mappingFiles + "]";
+	}
+
 	/**
 	 * 1. Sets the binary column names with are extracted from ORIGINAL_VARNAME column of metadata file
 	 * 2. Sets the mapping files
@@ -92,6 +113,7 @@ public class MetadataFile {
 	private void parseRows() throws IOException {
 		
 		isCodeSnippetValid = true;
+		rows = 1;
 		
 		CSVReader csvReader = new CSVReader( new FileReader( path ));
 		
@@ -101,6 +123,10 @@ public class MetadataFile {
 		
 		while ( null != ( row = csvReader.readNext() ) ) {
 		
+			++rows;
+
+			//System.out.println( StringUtils.join( row, ","));
+			
 			// set binary column names and types. types are not binary 
 			if ( row.length > colTypeIndexOnFile && ! "".equals( row[colNameIndexOnFile].trim() ) ) {
 				
@@ -121,9 +147,7 @@ public class MetadataFile {
 				String mappingPath = row[ colMappingIndexOnFile ].trim();
 				
 				if( ! "".equals( mappingPath ) ) {
-					
-//					File file = new File( mappingPath );
-					
+										
 					String absMappingPath = sasFolderPath + "/" + mappingPath;
 					
 					File file = new File( absMappingPath );
@@ -151,6 +175,13 @@ public class MetadataFile {
 					
 					if( ! "".equals( snippet ) ) {
 						
+						if ( ! canParseCodeSnippet( snippet ) ) {
+							
+							condeSnippetInvalidRow = rows;
+							
+							isCodeSnippetValid = false;
+							
+						}
 						
 					}
 					
@@ -161,16 +192,11 @@ public class MetadataFile {
 			}
 			
 			
-		}
+		} // while ends
+		
 		
 	}
 	
-	@Override
-	public String toString() {
-		return "MetadataFile [colNameIndexOnFile=" + colNameIndexOnFile + ", colTypeIndexOnFile=" + colTypeIndexOnFile
-				+ ", colMappingIndexOnFile=" + colMappingIndexOnFile + ", filename=" + filename + ", sasFolderPath="
-				+ sasFolderPath + ", path=" + path + ", columns=" + columns + ", mappingFiles=" + mappingFiles + "]";
-	}
 
 	/**
 	 * For a binary column name, return binary type which is Simple Java Class Name (Number or String)
@@ -185,7 +211,12 @@ public class MetadataFile {
 	
 	private boolean canParseCodeSnippet( String snippet ) {
 		
-		if ( StringUtils.countMatches( snippet, '"') % 2 == 0 && StringUtils.countMatches( snippet, '\'') % 2 == 0 )
+		int doubleCount = StringUtils.countMatches( snippet, '"');
+		int singleCount = StringUtils.countMatches( snippet, '\'');
+		
+		//System.out.println(" Double quotes " + doubleCount + " single quotes " + singleCount );
+		
+		if (  doubleCount % 2 == 0 &&  singleCount % 2 == 0 )
 			return true;
 		
 		return false;

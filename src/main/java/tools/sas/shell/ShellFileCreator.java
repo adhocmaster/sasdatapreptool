@@ -62,7 +62,13 @@ public class ShellFileCreator {
 		dataTargetHeaders = new HashMap<String, List<String>>();
 		
 	}
-	
+	/**
+	 * creates shell files from meta DDF file
+	 * @param DDFFilePath
+	 * @param outputDir
+	 * @param suffix
+	 * @throws Exception
+	 */
 	public void createCodeShellFile( String DDFFilePath, String outputDir, String suffix ) throws Exception {
 		
 		CSVReader csvReader = new CSVReader( new FileReader( DDFFilePath ));
@@ -316,6 +322,182 @@ public class ShellFileCreator {
 			}
 			
 		}
+		
+	}
+
+
+	public List<String> validate( String DDFFilePath, String outputDir, String suffix ) throws Exception {
+		
+		CSVReader csvReader = new CSVReader( new FileReader( DDFFilePath ));
+		
+		String[] header = null;
+		List<String> outputHeader = new ArrayList<String>(); //  columns in Shell file
+		
+		// 1. Process Header and work out positions of related columns
+		if ( null != ( header = csvReader.readNext() ) ) {
+			
+			//logger.info( StringUtils.join( header, "," ) );
+
+			for ( int position = 0; position < header.length; ++position ) {
+				
+				String colName = header[ position ];
+				
+				// if col position is less than 5 ( col A to E )
+				if ( position < 5 ) {
+					
+					outputHeader.add( colName );
+					
+				}
+
+				if ( FLAG_COL_NAMES.TARGET_VARNAME.name().equals( colName ) ) {
+					
+					FLAG_COL_NAMES.TARGET_VARNAME.setPosition( position );
+					
+				} else if ( FLAG_COL_NAMES.TARGET_DATANAME.name().equals( colName ) ) {
+					
+					FLAG_COL_NAMES.TARGET_DATANAME.setPosition( position );
+					
+				} else if ( FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.name().equals( colName ) ) {
+					
+					FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.setPosition( position );
+					
+				} else if ( FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name().equals( colName ) ) {
+					
+					FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.setPosition( position );
+					
+				}
+				
+			}
+						
+		} else {
+			
+			throw new Exception (" header col not found ");
+			
+		}
+
+		logger.info(FLAG_COL_NAMES.TARGET_DATANAME.name() + ": " + FLAG_COL_NAMES.TARGET_DATANAME.getPosition());
+		logger.info(FLAG_COL_NAMES.TARGET_VARNAME.name() + ": " + FLAG_COL_NAMES.TARGET_VARNAME.getPosition());
+		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition());
+		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition());
+		
+		logger.info( StringUtils.join( outputHeader, "," ) );
+		
+		if ( 0 == FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition() || 0 == FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition() ) {
+
+			throw new Exception (" required flag cols not found ");
+			
+		}
+		
+		
+		List<String[]> valueRows = new ArrayList<String[]>();
+		
+		/**
+		 * There can be multiple files depending on the TARGET_DATANAME column. Like SS will have shell file. So value rows are different
+		 */
+		Map<String, List<String[]>> targetValueRows = new HashMap<String, List<String[]>>();
+		
+		
+		
+		
+		int valPos = FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition();
+		int namePos = FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition();
+		int nameTargetPos = FLAG_COL_NAMES.TARGET_VARNAME.getPosition();
+		int dataTargetPos = FLAG_COL_NAMES.TARGET_DATANAME.getPosition();
+
+		String[] row = null;
+		
+		//2 work out value rows and name rows
+		while ( null != ( row = csvReader.readNext() ) ) {
+			
+
+			// check if this row has a flag value,
+			
+			// if value row, copy A-E
+			if( "Y".equals( row[ valPos ] ) || "y".equals( row[ valPos ] )) {
+				
+				String[] rowValuesToCopy = Arrays.copyOfRange( row, 0, 5 );
+				
+				valueRows.add( rowValuesToCopy ); // copy the first 5 columns only
+				
+				// add to dataTargets
+				dataTargets.add( row[dataTargetPos] );
+				
+				List<String[]> valueRows2 = targetValueRows.get( row[dataTargetPos] );
+				
+				if ( null ==  valueRows2 ) {
+					
+					valueRows2 = new ArrayList<String[]>();
+					targetValueRows.put( row[dataTargetPos], valueRows2 );
+					
+				}
+				
+				valueRows2.add( rowValuesToCopy );
+				
+				
+				// will it be automatically copied?
+				
+			}
+			
+			// check if this row has a flag name
+			
+			if( "Y".equals( row[ namePos ] ) || "y".equals( row[ namePos ] )) {
+
+				// get value from col G / Target column of this row and save it in outputHeader
+				
+				//outputHeader.add( "CODE_" + row[ nameTargetPos ] );
+				List<String> targetHeaders = dataTargetHeaders.get( row[dataTargetPos] );
+				
+				if ( null == targetHeaders ) {
+					
+					targetHeaders = new ArrayList<String>();
+					
+					dataTargetHeaders.put( row[dataTargetPos], targetHeaders );
+					
+				}
+				
+				targetHeaders.add( "CODE_" + row[ nameTargetPos ] );
+				
+			}
+			
+			
+			
+			
+		}
+
+
+//		logger.info( StringUtils.join( outputHeader, "," ) );
+
+//		for( String[] valueRow : valueRows ) {
+//			
+//
+//			logger.info( StringUtils.join( valueRow, "," ) );
+//			
+//		}
+
+		logger.info( "Data targets found: " + dataTargets );
+
+//		printTargetHeaders ( dataTargetHeaders );
+//		printTargetRows( targetValueRows );
+		
+		//writeFile( outputDir + "/SS_CodeShellFile.csv", outputHeader, valueRows );
+		
+		for( String target: dataTargets ) {
+			
+			String filename = outputDir + "/" + target + suffix + ".csv";
+			
+			List<String> headers = new ArrayList<String>();
+			headers.addAll( outputHeader );
+			headers.addAll( dataTargetHeaders.get( target) );
+			
+			validateFile( filename, headers, targetValueRows.get( target ) );
+			
+		}
+	}
+	
+	public List<String> validateFile( String currentFilePath, List<String> outputHeader, List<String[]> valueRows ) {
+		
+		// read current file and match every string
+		
 		
 	}
 
