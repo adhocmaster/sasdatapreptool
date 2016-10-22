@@ -17,6 +17,7 @@ import tools.sas.binary.BinaryFile;
 import tools.sas.binary.Stats;
 import tools.sas.metadata.MappingFile;
 import tools.sas.metadata.MetadataFile;
+import tools.sas.shell.ShellFileCreator;
 import topcoder.gates.tools.sas.prep.App;
 
 public class ReportEngine implements ReportInterface {
@@ -77,8 +78,11 @@ public class ReportEngine implements ReportInterface {
 		//#8
 		printInvalidMappingFiles();
 		
-		//#8
+		//#9
 		printInvalidCodeSnippets();
+		
+		//#10 & #11
+		validateShellAgainstMetaData();
 	}
 
 	/**
@@ -340,14 +344,45 @@ public class ReportEngine implements ReportInterface {
 	/**
 	 * #10 The validation process should look for the shell files described in Section 1 above. If there are ‘Y’ values in the IS_TARGET_FIELD_CODE_NAME column 
 	 * of the DDF file there should a corresponding shell file for the target file which contains the appropriate code values.
+	 * #11 The validation solution should also verify that the names of code fields in shell files match up with the target field names in the metadata document. 
+	 * The code fields in the shell document have a prefix of “CODE_” + the actual field name.
 	 * @return
 	 */
 	public void validateShellAgainstMetaData() {
 		
 		logger.info( "---------------------------------------------------------------------------------------------" );
-		logger.info( "#10 Validate Shell file agains DDF: " );
+		logger.info( "#10 & #11 Validate Shell file agains DDF (matches column names and data from A-E: " );
+		
+		ShellFileCreator creator = new ShellFileCreator();
+		
+		try {
+		
+			List<String> errors = creator.validate( metaDataFilePath, sasFolderPath, shellSuffix );
+			
+			if( errors.isEmpty() ) {
+				
+				logger.info( "Shell files are valid");
+				
+			} else {
+				
+				logger.error( StringUtils.join( errors, "\n") );
+				
+			}
+			
+		} catch ( Exception e ) {
+			
+			logger.error( e.getMessage(), e);
+			
+		}
+		
+		
 	}
 
+	/**
+	 * #11 The validation solution should also verify that the names of code fields in shell files match up with the target field names in the metadata document. 
+	 * The code fields in the shell document have a prefix of “CODE_” + the actual field name.
+	 * @return
+	 */
 	public List<String> validateShellCodeNames() {
 		// TODO Auto-generated method stub
 		return null;

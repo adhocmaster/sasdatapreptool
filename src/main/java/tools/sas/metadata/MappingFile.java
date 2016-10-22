@@ -121,6 +121,8 @@ public class MappingFile {
 					errorLineNo = records;
 					errorRecord = StringUtils.join( header, ",");
 					isValidCSV = false;
+					
+					csvReader.close();
 					return;
 					
 				}
@@ -130,6 +132,11 @@ public class MappingFile {
 				errorLineNo = records;
 				errorRecord = "no record parsed";
 				isValidCSV = false;
+				try {
+					csvReader.close();
+				} catch (IOException e1) {
+
+				}
 				return;
 				
 			}
@@ -155,6 +162,7 @@ public class MappingFile {
 						errorLineNo = records;
 						errorRecord = StringUtils.join( row, ",");
 						isValidCSV = false;
+						csvReader.close();
 						return;
 						
 					}
@@ -166,6 +174,11 @@ public class MappingFile {
 				errorLineNo = records;
 				errorRecord = "no record parsed";
 				isValidCSV = false;
+				try {
+					csvReader.close();
+				} catch (IOException e1) {
+
+				}
 				return;
 
 			}
@@ -173,6 +186,11 @@ public class MappingFile {
 			--records; // trimming header
 			errorLineNo = 0;
 			isValidCSV = true;
+			try {
+				csvReader.close();
+			} catch (IOException e) {
+
+			}
 			return;
 			
 		} catch ( FileNotFoundException e ) {

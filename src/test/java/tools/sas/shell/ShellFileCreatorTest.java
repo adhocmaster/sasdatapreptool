@@ -2,6 +2,8 @@ package tools.sas.shell;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +24,13 @@ public class ShellFileCreatorTest {
 		
 		try {
 			
-			new ShellFileCreator().createCodeShellFile( DDFFilePath, outDir, suffix );
+			ShellFileCreator creator = new ShellFileCreator();
+			
+			creator.createCodeShellFile( DDFFilePath, outDir, suffix );
+			
+			List<String> errors = new ShellFileCreator().validate(DDFFilePath, outDir, suffix);
+			
+			System.out.println( errors );
 			
 		} catch ( Exception e ) {
 			

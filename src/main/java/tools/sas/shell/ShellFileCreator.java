@@ -114,19 +114,21 @@ public class ShellFileCreator {
 						
 		} else {
 			
+			csvReader.close();
 			throw new Exception (" header col not found ");
 			
 		}
-
-		logger.info(FLAG_COL_NAMES.TARGET_DATANAME.name() + ": " + FLAG_COL_NAMES.TARGET_DATANAME.getPosition());
-		logger.info(FLAG_COL_NAMES.TARGET_VARNAME.name() + ": " + FLAG_COL_NAMES.TARGET_VARNAME.getPosition());
-		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition());
-		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition());
-		
-		logger.info( StringUtils.join( outputHeader, "," ) );
+//
+//		logger.info(FLAG_COL_NAMES.TARGET_DATANAME.name() + ": " + FLAG_COL_NAMES.TARGET_DATANAME.getPosition());
+//		logger.info(FLAG_COL_NAMES.TARGET_VARNAME.name() + ": " + FLAG_COL_NAMES.TARGET_VARNAME.getPosition());
+//		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition());
+//		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition());
+//		
+//		logger.info( StringUtils.join( outputHeader, "," ) );
 		
 		if ( 0 == FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition() || 0 == FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition() ) {
 
+			csvReader.close();
 			throw new Exception (" required flag cols not found ");
 			
 		}
@@ -207,6 +209,7 @@ public class ShellFileCreator {
 			
 		}
 
+		csvReader.close();
 
 //		logger.info( StringUtils.join( outputHeader, "," ) );
 
@@ -217,7 +220,7 @@ public class ShellFileCreator {
 //			
 //		}
 
-		logger.info( "Data targets found: " + dataTargets );
+//		logger.info( "Data targets found: " + dataTargets );
 
 //		printTargetHeaders ( dataTargetHeaders );
 //		printTargetRows( targetValueRows );
@@ -371,19 +374,21 @@ public class ShellFileCreator {
 						
 		} else {
 			
+			csvReader.close();
 			throw new Exception (" header col not found ");
 			
 		}
 
-		logger.info(FLAG_COL_NAMES.TARGET_DATANAME.name() + ": " + FLAG_COL_NAMES.TARGET_DATANAME.getPosition());
-		logger.info(FLAG_COL_NAMES.TARGET_VARNAME.name() + ": " + FLAG_COL_NAMES.TARGET_VARNAME.getPosition());
-		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition());
-		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition());
-		
-		logger.info( StringUtils.join( outputHeader, "," ) );
-		
+//		logger.info(FLAG_COL_NAMES.TARGET_DATANAME.name() + ": " + FLAG_COL_NAMES.TARGET_DATANAME.getPosition());
+//		logger.info(FLAG_COL_NAMES.TARGET_VARNAME.name() + ": " + FLAG_COL_NAMES.TARGET_VARNAME.getPosition());
+//		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition());
+//		logger.info(FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.name() + ": " + FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition());
+//		
+//		logger.info( StringUtils.join( outputHeader, "," ) );
+//		
 		if ( 0 == FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_NAME.getPosition() || 0 == FLAG_COL_NAMES.IS_TARGET_FIELD_CODE_VALUE.getPosition() ) {
 
+			csvReader.close();
 			throw new Exception (" required flag cols not found ");
 			
 		}
@@ -464,6 +469,7 @@ public class ShellFileCreator {
 			
 		}
 
+		csvReader.close();
 
 //		logger.info( StringUtils.join( outputHeader, "," ) );
 
@@ -474,12 +480,14 @@ public class ShellFileCreator {
 //			
 //		}
 
-		logger.info( "Data targets found: " + dataTargets );
+//		logger.info( "Data targets found: " + dataTargets );
 
-//		printTargetHeaders ( dataTargetHeaders );
+		//printTargetHeaders ( dataTargetHeaders );
 //		printTargetRows( targetValueRows );
 		
 		//writeFile( outputDir + "/SS_CodeShellFile.csv", outputHeader, valueRows );
+		
+		List<String> errors = new ArrayList<String>();
 		
 		for( String target: dataTargets ) {
 			
@@ -489,15 +497,136 @@ public class ShellFileCreator {
 			headers.addAll( outputHeader );
 			headers.addAll( dataTargetHeaders.get( target) );
 			
-			validateFile( filename, headers, targetValueRows.get( target ) );
+			errors.addAll( validateFile( filename, headers, targetValueRows.get( target ) ) );
 			
 		}
+		
+		return errors;
+		
 	}
 	
 	public List<String> validateFile( String currentFilePath, List<String> outputHeader, List<String[]> valueRows ) {
 		
 		// read current file and match every string
+
+		List<String> errors = new ArrayList<String>();
 		
+		try {
+			
+			CSVReader csvReader = new CSVReader( new FileReader( currentFilePath ));
+			
+			try {
+				
+				String[] header = csvReader.readNext();
+				
+				if ( ! isSame( header, outputHeader, 0 ) ) {
+
+					errors.add( "\nHeader mistmatch: \nShell( " + StringUtils.join( header, ",") + " ) and \nDDF (" + StringUtils.join( outputHeader, ",") + " )" );
+					return errors;
+					
+				}
+				
+				String[] row = null;
+				
+				int valueRowsCount = valueRows.size();
+				int index = 0;
+				
+				try {
+
+					while( null != ( row = csvReader.readNext() ) ) {
+						
+						if ( index >= valueRowsCount )
+							break;
+						
+						// match from A to E only
+						if ( ! isSame( row , valueRows.get( index ), 5 ) ) {
+							
+							errors.add( "\nRecord mismatch: \n" + StringUtils.join( row, ",") + "\n" + StringUtils.join( valueRows.get( index ), ",") );
+							
+						}
+						++index;
+					}
+					
+				} catch ( Exception e ) {
+					
+					errors.add( e.getMessage() );
+					
+				}
+				
+				
+			} catch (IOException e) {
+
+
+				errors.add( "Header NOT FOUND: " + currentFilePath );
+				
+			}
+			
+		} catch (FileNotFoundException e) {
+
+			errors.add( "NOT FOUND: " + currentFilePath );
+			
+		}
+		
+		return errors;
+		
+		
+	}
+
+	public boolean isSame( String[] arr, List<String> list, int limit ) {
+		
+		if ( limit < 1 && (arr.length != list.size()) ) {
+			
+			return false;
+			
+		} else if( arr.length < limit || list.size() < limit ) {
+
+			return false;
+			
+		}
+		
+		if ( limit < 1 )
+			limit = arr.length;
+
+		for( int i = 0; i < limit; ++i ) {
+			
+			if ( ! arr[i].equals( list.get(i) ) ) {
+				
+				return false;
+				
+			}
+			
+		}
+		
+		return true;
+		
+	}
+	
+	public boolean isSame( String[] arr, String[] list, int limit ) {
+
+		if ( limit < 1 && (arr.length != list.length) ) {
+			
+			return false;
+			
+		} else if( arr.length < limit || list.length < limit ) {
+
+			return false;
+			
+		}
+
+		if ( limit < 1 )
+			limit = arr.length;
+		
+		for( int i = 0; i < limit; ++i ) {
+			
+			if ( ! arr[i].equals( list[i] ) ) {
+				
+				return false;
+				
+			}
+			
+		}
+		
+		return true;
 		
 	}
 
