@@ -15,6 +15,7 @@ import com.epam.parso.Column;
 
 import tools.sas.binary.BinaryFile;
 import tools.sas.binary.Stats;
+import tools.sas.metadata.MappingFile;
 import tools.sas.metadata.MetadataFile;
 import topcoder.gates.tools.sas.prep.App;
 
@@ -66,6 +67,15 @@ public class ReportEngine implements ReportInterface {
 		
 		//#5
 		printMisMatchedCols();
+		
+		//#6
+		printMappingFilesPath();
+		
+		//#7
+		printRecordNumberForAllMappingFiles();
+		
+		//#8
+		printInvalidMappingFiles();
 	}
 
 	/**
@@ -200,21 +210,113 @@ public class ReportEngine implements ReportInterface {
 		
 	}
 
-	public Map<String, String> getMappingFilesPath() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * #6 The name and full path of each mapping file identified in the MAPPING_FILE column of the metadata file.
+	 * @return
+	 */
+	public void printMappingFilesPath() {
+
+		logger.info( "---------------------------------------------------------------------------------------------" );
+		logger.info( "#6 The name and full path of each mapping file identified in the MAPPING_FILE column of the metadata file: " );
+		
+		Map<String, MappingFile> mappingFiles = metadataFile.getMappingFiles();
+		
+		Set<String> names = mappingFiles.keySet();
+		
+		for ( String name : names ) {
+			
+			MappingFile mappingFile = mappingFiles.get( name );
+			
+			if ( mappingFile.isValidFile() ) {
+				
+				logger.info( "Found: " + mappingFile.getFilename() + " - " + mappingFile.getPath() );
+				
+			} else {
+				
+				logger.error( "NOT Found: " + mappingFile.getFilename() + " - " + mappingFile.getPath() );
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * #7 The number of records present in each mapping file.
+	 * @return
+	 */
+	public  void printRecordNumberForAllMappingFiles() {
+
+		logger.info( "---------------------------------------------------------------------------------------------" );
+		logger.info( "#7 The number of records present in each mapping file: " );
+		
+		Map<String, MappingFile> mappingFiles = metadataFile.getMappingFiles();
+		
+		Set<String> names = mappingFiles.keySet();
+		
+		for ( String name : names ) {
+			
+			MappingFile mappingFile = mappingFiles.get( name );
+
+			if ( ! mappingFile.isValidFile() ) {
+				
+				logger.error( "NOT Found: " + mappingFile.getFilename() + " - " + mappingFile.getPath() );
+				
+			
+			} else if ( mappingFile.isValidCSV() ) {
+				
+				logger.info( mappingFile.getFilename() + " - " + mappingFile.getRecords() );
+				
+			} else {
+				
+				//logger.error( mappingFile.getFilename() + " line #" + mappingFile.getErrorLineNo() + " " + mappingFile.getErrorRecord() );
+			}
+			
+		}
+		
+		
 	}
 
-	public Map<String, Long> getRecordNumberForAllMappingFiles() {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * #8 A report for each mapping file validating the csv format of the file. Line number and the first invalid record found in each file.
+	 * @return filename -> (line # -> record )
+	 */
+	public void printInvalidMappingFiles() {
+
+		logger.info( "---------------------------------------------------------------------------------------------" );
+		logger.info( "#8 A report for each mapping file validating the csv format of the file. Please provide line number and the first invalid record found in each file: " );
+
+		Map<String, MappingFile> mappingFiles = metadataFile.getMappingFiles();
+		
+		Set<String> names = mappingFiles.keySet();
+		
+		for ( String name : names ) {
+			
+			MappingFile mappingFile = mappingFiles.get( name );
+
+			if ( ! mappingFile.isValidFile() ) {
+				
+				logger.error( "NOT Found: " + mappingFile.getFilename() + " - " + mappingFile.getPath() );
+				
+			
+			} else if ( ! mappingFile.isValidCSV() ) {
+
+				logger.error( "INVALID: " + mappingFile.getFilename() + " line #" + mappingFile.getErrorLineNo() + " " + mappingFile.getErrorRecord() );
+				
+			} else {
+				
+				logger.info( mappingFile.getFilename() + " is VALID ");
+				
+			}
+			
+		}
+		
+		
 	}
 
-	public Map<String, Map<Long, String>> getInvalidMappingFiles() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/**
+	 * #9 Please ensure that there are no open quotes in the in the Code Snippet column. For example, “Example 1 rather than “Example 1”.
+	 * @return
+	 */
 	public List<String> getInvalidCodeSnippets() {
 		// TODO Auto-generated method stub
 		return null;

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,10 @@ public class MetadataFile {
 	final int colNameIndexOnFile = 1;
 	final int colTypeIndexOnFile = 2;
 	final int colMappingIndexOnFile = 12;
+	final int colSnippetIndexOnFile = 13;
+	
+
+	boolean isCodeSnippetValid = true;
 	
 	String filename;
 	String sasFolderPath;
@@ -53,6 +58,22 @@ public class MetadataFile {
 	}
 	
 	/**
+	 * Must be used after parseRow is completed.
+	 * @return
+	 */
+	public boolean isCodeSnippetValid() {
+		return isCodeSnippetValid;
+	}
+
+	public String getSasFolderPath() {
+		return sasFolderPath;
+	}
+
+	public Map<String, MappingFile> getMappingFiles() {
+		return mappingFiles;
+	}
+
+	/**
 	 * Returns binary columns found in metadata file ORIGINAL_VARNAME column. Also gives the types as in metadata formal ( COLUMN ORIGINAL_VARTYPE char or num )
 	 * @return
 	 */
@@ -70,7 +91,8 @@ public class MetadataFile {
 	 */
 	private void parseRows() throws IOException {
 		
-
+		isCodeSnippetValid = true;
+		
 		CSVReader csvReader = new CSVReader( new FileReader( path ));
 		
 		csvReader.readNext(); // discard header row
@@ -105,17 +127,6 @@ public class MetadataFile {
 					String absMappingPath = sasFolderPath + "/" + mappingPath;
 					
 					File file = new File( absMappingPath );
-					
-					if ( ! file.isFile() ) {
-						
-						logger.error( "Mapping not a valid file: " + absMappingPath );
-						
-					} else {
-						
-						logger.info( "Found mapping file: " + absMappingPath );
-						
-						
-					}
 
 					MappingFile mappingFile = new MappingFile( absMappingPath );
 					
@@ -129,6 +140,25 @@ public class MetadataFile {
 				
 			}
 			// end mapping files
+			
+			//validate open quotes. try to make it invalid
+			
+			if( isCodeSnippetValid ) {
+			
+				try {
+					
+					String snippet = row[ colSnippetIndexOnFile ];
+					
+					if( ! "".equals( snippet ) ) {
+						
+						
+					}
+					
+				} catch ( Exception e ) {
+					
+					//ignore
+				}
+			}
 			
 			
 		}
@@ -150,6 +180,15 @@ public class MetadataFile {
 	public String getBinaryType( String colName ) {
 		
 		return TypeConversion.DDFToBinary.get( columns.get( colName ) );
+		
+	}
+	
+	private boolean canParseCodeSnippet( String snippet ) {
+		
+		if ( StringUtils.countMatches( snippet, '"') % 2 == 0 && StringUtils.countMatches( snippet, '\'') % 2 == 0 )
+			return true;
+		
+		return false;
 		
 	}
 	

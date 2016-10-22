@@ -42,19 +42,19 @@ public interface ReportInterface {
 	 * #6 The name and full path of each mapping file identified in the MAPPING_FILE column of the metadata file.
 	 * @return
 	 */
-	public Map<String, String> getMappingFilesPath();
+	public void printMappingFilesPath();
 	
 	/**
 	 * #7 The number of records present in each mapping file.
 	 * @return
 	 */
-	public Map<String, Long> getRecordNumberForAllMappingFiles();
+	public void printRecordNumberForAllMappingFiles();
 	
 	/**
 	 * #8 A report for each mapping file validating the csv format of the file. Please provide line number and the first invalid record found in each file.
 	 * @return filename -> (line # -> record )
 	 */
-	public Map<String, Map<Long, String>> getInvalidMappingFiles();
+	public void printInvalidMappingFiles();
 
 	/**
 	 * #9 Please ensure that there are no open quotes in the in the Code Snippet column. For example, “Example 1 rather than “Example 1”.
